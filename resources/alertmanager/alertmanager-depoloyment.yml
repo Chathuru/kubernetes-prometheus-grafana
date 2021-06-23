@@ -1,10 +1,12 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
-  namespace: monitoring
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
   template:
     metadata:
       labels:
@@ -12,7 +14,7 @@ spec:
     spec:
       containers:
       - name: prometheus-alertmanager
-        image: prom/alertmanager:v0.14.0
+        image: prom/alertmanager:v0.22.2
         args:
           - --config.file=/etc/config/alertmanager.yml
           - --storage.path=/data
@@ -24,19 +26,10 @@ spec:
             name: config-volume
           - mountPath: /data
             name: storage-volume
-      - name: prometheus-alertmanager-configmap-reload
-        image: jimmidyson/configmap-reload:v0.1
-        args:
-          - --volume-dir=/etc/config
-          - --webhook-url=http://localhost:9093/-/reload
-        volumeMounts:
-          - mountPath: /etc/config
-            name: config-volume
-            readOnly: true
       volumes:
-        - configMap:
+        - name: config-volume
+          configMap:
             defaultMode: 420
-            name: alertmanager-conf
-          name: config-volume
-        - emptyDir: {}
-          name: storage-volume
+            name: alertmanager-conf   
+        - name: storage-volume
+          emptyDir: {}
