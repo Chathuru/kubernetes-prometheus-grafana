@@ -5,6 +5,9 @@ metadata:
   labels:
     name: prometheus-server-conf
 data:
+  web.yml: |-
+    basic_auth_users:
+      admin: $2b$12$jefst9cQ10UOFT0JNhQzqufBLuzw/7ccqrmUeGwmSWruXK7iwIJwW
   prometheus.yml: |-
     global:
       scrape_interval: 5s

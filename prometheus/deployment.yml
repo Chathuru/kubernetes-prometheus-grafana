@@ -14,16 +14,21 @@ spec:
     spec:
       containers:
       - name: prometheus
-        image: prom/prometheus:v2.25.0
+        image: quay.io/prometheus/prometheus:v2.31.1
         args:
           - "--config.file=/etc/prometheus/prometheus.yml"
           - "--storage.tsdb.path=/prometheus/"
+          - "--web.config.file=/etc/prometheus/web.yml"
           - "--web.enable-lifecycle"
         ports:
           - containerPort: 9090
         volumeMounts:
         - name: prometheus-config-volume
-          mountPath: /etc/prometheus/
+          mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus/web.yml
+          subPath: web.yml
         - name: prometheus-storage-volume
           mountPath: /prometheus/
       serviceAccountName: prometheus-sa
