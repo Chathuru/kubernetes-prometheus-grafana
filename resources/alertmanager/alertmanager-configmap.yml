@@ -1,0 +1,218 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-conf
+  namespace: monitoring
+data:
+  alertmanager.yml: |-
+    global:
+      resolve_timeout: 5m
+      http_config:
+        follow_redirects: true
+      smtp_hello: localhost
+      smtp_require_tls: true
+      pagerduty_url: https://events.pagerduty.com/v2/enqueue
+      opsgenie_api_url: https://api.opsgenie.com/
+      wechat_api_url: https://qyapi.weixin.qq.com/cgi-bin/
+      victorops_api_url: https://alert.victorops.com/integrations/generic/20131114/alert/
+    route:
+      receiver: lowAlertsPrometheus
+      group_by:
+      - '...'
+      continue: false
+      routes:
+      - receiver: highAlertsLokiPre
+        matchers:
+        - channel="loki-high-pre"
+        continue: true
+      - receiver: mediumAlertsLokiPre
+        matchers:
+        - channel="loki-medium-pre"
+        continue: true
+      - receiver: highAlertsPrometheus
+        matchers:
+        - channel="prometheus-high"
+        continue: true
+      - receiver: mediumAlertsPrometheus
+        matchers:
+        - channel="prometheus-medium"
+        continue: true
+      - receiver: lowAlertsLoki
+        matchers:
+        - channel="loki-low"
+        continue: true
+      - receiver: lowAlertsPrometheus
+        matchers:
+        - channel="prometheus-low"
+        continue: true
+    receivers:
+    - name: highAlertsPrometheus
+      slack_configs:
+      - send_resolved: true
+        http_config:
+          follow_redirects: true
+        api_url: <secret>
+        channel: sandbox-high-alerts
+        username: '{{ template "slack.default.username" . }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        title: '{{ if eq .Status "firing" }}:fire:{{ else }}:white_check_mark:{{ end }}
+          [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'
+        title_link: '{{ template "slack.default.titlelink" . }}'
+        pretext: '{{ template "slack.default.pretext" . }}'
+        text: |-
+          {{ range .Alerts -}}
+
+
+          Summary: `{{ .Annotations.summary }}`
+
+          Description: `{{ .Annotations.description }}`
+
+          Grafana Graph: <{{ .Annotations.graph }}| ClickHere>
+
+          {{ end }}
+        short_fields: false
+        footer: '{{ template "slack.default.footer" . }}'
+        fallback: '{{ template "slack.default.fallback" . }}'
+        callback_id: '{{ template "slack.default.callbackid" . }}'
+        icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+        icon_url: '{{ template "slack.default.iconurl" . }}'
+        link_names: false
+    - name: mediumAlertsPrometheus
+      slack_configs:
+      - send_resolved: true
+        http_config:
+          follow_redirects: true
+        api_url: <secret>
+        channel: sandbox-medium-alerts
+        username: '{{ template "slack.default.username" . }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        title: '{{ if eq .Status "firing" }}:fire:{{ else }}:white_check_mark:{{ end }}
+          [{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'
+        title_link: '{{ template "slack.default.titlelink" . }}'
+        pretext: '{{ template "slack.default.pretext" . }}'
+        text: "{{ range .Alerts -}}\n \n\n Summary: `{{ .Annotations.summary }}`\n\n
+          Description: `{{ .Annotations.description }}`\n\n Grafana Graph: <{{ .Annotations.graph
+          }}| ClickHere>\n\n {{ end }}"
+        short_fields: false
+        footer: '{{ template "slack.default.footer" . }}'
+        fallback: '{{ template "slack.default.fallback" . }}'
+        callback_id: '{{ template "slack.default.callbackid" . }}'
+        icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+        icon_url: '{{ template "slack.default.iconurl" . }}'
+        link_names: false
+    - name: highAlertsLokiPre
+      slack_configs:
+      - send_resolved: false
+        http_config:
+          follow_redirects: true
+        api_url: <secret>
+        channel: sandbox-high-alerts
+        username: '{{ template "slack.default.username" . }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        title: '{{ if eq .Status "firing" }}:fire:{{ else }}:white_check_mark:{{ end }}
+          [{{ .Status | toUpper }}] {{ range .Alerts }}{{ .Annotations.eventTitle }}{{
+          end }}'
+        title_link: '{{ template "slack.default.titlelink" . }}'
+        pretext: '{{ template "slack.default.pretext" . }}'
+        text: |-
+          {{ range .Alerts }}
+
+            Event Title: `{{ .Annotations.eventTitle }}`
+
+            Error Code: `{{ .Annotations.errorCode }}`
+
+            Event Source: `{{ .Annotations.eventSource }}`
+
+            Event Category: `{{ .Annotations.eventCategory }}`
+
+            Error Logs: <https://kibana.example.com/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(query:(language:kuery,query:'kubernetes.container_name:%22{{ .Annotations.eventSource }}%22%20and%20%22{{ .Annotations.errorCode }}%22'),sort:!(!('@timestamp',desc)))| ClickHere>
+
+            Error Catalog: <URL_URL| ClickHere>
+
+          {{ end }}
+        short_fields: false
+        footer: '{{ template "slack.default.footer" . }}'
+        fallback: '{{ template "slack.default.fallback" . }}'
+        callback_id: '{{ template "slack.default.callbackid" . }}'
+        icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+        icon_url: '{{ template "slack.default.iconurl" . }}'
+        link_names: false
+    - name: mediumAlertsLokiPre
+      slack_configs:
+      - send_resolved: false
+        http_config:
+          follow_redirects: true
+        api_url: <secret>
+        channel: sandbox-medium-alerts
+        username: '{{ template "slack.default.username" . }}'
+        color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+        title: '{{ if eq .Status "firing" }}:fire:{{ else }}:white_check_mark:{{ end }}
+          [{{ .Status | toUpper }}] {{ range .Alerts }}{{ .Annotations.eventTitle }}{{
+          end }}'
+        title_link: '{{ template "slack.default.titlelink" . }}'
+        pretext: '{{ template "slack.default.pretext" . }}'
+        text: |-
+          {{ range .Alerts }}
+
+            Event Title: `{{ .Annotations.eventTitle }}`
+
+            Error Code: `{{ .Annotations.errorCode }}`
+
+            Event Source: `{{ .Annotations.eventSource }}`
+
+            Event Category: `{{ .Annotations.eventCategory }}`
+
+            Error Logs: <https://kibana.example.com/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(query:(language:kuery,query:'kubernetes.container_name:%22{{ .Annotations.eventSource }}%22%20and%20%22{{ .Annotations.errorCode }}%22'),sort:!(!('@timestamp',desc)))| ClickHere>
+
+            Error Catalog: <URL_URL| ClickHere>
+
+          {{ end }}
+        short_fields: false
+        footer: '{{ template "slack.default.footer" . }}'
+        fallback: '{{ template "slack.default.fallback" . }}'
+        callback_id: '{{ template "slack.default.callbackid" . }}'
+        icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+        icon_url: '{{ template "slack.default.iconurl" . }}'
+        link_names: false
+    - name: lowAlertsPrometheus
+      email_configs:
+      - send_resolved: true
+        to: aaaaa@example.com
+        from: SystemAlerts@example.com
+        hello: localhost
+        smarthost: email-smtp.eu-west-1.amazonaws.com:587
+        auth_username: <user>
+        auth_password: <secret>
+        auth_identity: <user>
+        headers:
+          From: SystemAlerts@example.com
+          Subject: '{{ if eq .Status "firing" }}[{{ .Status | toUpper }}]{{ else }}[{{
+            .Status | toUpper }}]{{ end }} {{ .CommonLabels.alertname }}'
+          To: aaaaa@example.com,aaaaa@example.com
+        html: '{{ if eq .Status "firing" }} {{ template "PromFiringEmailTemplate" . }}
+          {{ else }} {{ template "PromResolvedEmailTemplate" . }} {{ end }}'
+        require_tls: true
+    - name: lowAlertsLoki
+      email_configs:
+      - send_resolved: true
+        to: aaaaa@example.com
+        from: SystemAlerts@example.com
+        hello: localhost
+        smarthost: email-smtp.eu-west-1.amazonaws.com:587
+        auth_username: <user>
+        auth_password: <secret>
+        auth_identity: <user>
+        headers:
+          From: SystemAlerts@example.com
+          Subject: '{{ if eq .Status "firing" }}[{{ .Status | toUpper }}]{{ else }}[{{
+            .Status | toUpper }}]{{ end }}  {{ range .Alerts }}{{ .Annotations.eventTitle
+            }}{{ end }}'
+          To: aaaaa@example.com,aaaaa@example.com
+        html: '{{ if eq .Status "firing" }} {{ template "LokiFiringEmailTemplate" . }}
+          {{ else }} {{ template "LokiResolvedEmailTemplate" . }} {{ end }}'
+        require_tls: true
+    templates:
+    - /etc/config/templates/LokiFiringTemplate.tmpl
+    - /etc/config/templates/LokiResolvedTemplate.tmpl
+    - /etc/config/templates/PromFiringTemplate.tmpl
+    - /etc/config/templates/PromResolvedTemplate.tmpl
