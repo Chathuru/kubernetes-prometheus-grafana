@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: prometheus-alertmanager
-        image: prom/alertmanager:v0.22.2
+        image: prom/alertmanager:v0.23.0
         args:
           - --config.file=/etc/config/alertmanager.yml
           - --storage.path=/data
@@ -22,7 +22,8 @@ spec:
         ports:
           - containerPort: 9093
         volumeMounts:
-          - mountPath: /etc/config
+          - mountPath: /etc/config/alertmanager.yml
+            subPath: alertmanager.yml
             name: config-volume
           - mountPath: /data
             name: storage-volume
