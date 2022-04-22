@@ -13,16 +13,12 @@ spec:
       app: node-exporter
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: 'true'
-        node_exporter: 'true'
       labels:
         app: node-exporter
     spec:
       containers:
       - name: node-exporter
         args:
-        - --web.listen-address=127.0.0.1:9100
         - --path.sysfs=/host/sys
         - --path.rootfs=/host/root
         - --no-collector.wifi
