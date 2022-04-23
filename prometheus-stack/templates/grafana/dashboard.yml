@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard
+data:
+  compute_resources_pod.json: |-
+{{ .Files.Get "./dashboards/compute_resources_pod.json" . | indent 4 }}
+  pod_cluster_monitor.json: |-
+{{ .Files.Get "./dashboards/pod_cluster_monitor.json" . | indent 4 }}
+  pod_monitorjson: |-
+{{ .Files.Get "./dashboards/pod_monitor.json" . | indent 4 }}
