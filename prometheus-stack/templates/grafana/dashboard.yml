@@ -111,7 +111,7 @@ data:
               "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=\"$namespace\", pod=\"$pod\", cluster=\"$cluster\"}) by (container)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{container}}",
+              "legendFormat": "{{ "{{" }} container {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -243,7 +243,7 @@ data:
               "expr": "sum(increase(container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=\"$pod\", container!=\"\", cluster=\"$cluster\"}[5m])) by (container) /sum(increase(container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=\"$pod\", container!=\"\", cluster=\"$cluster\"}[5m])) by (container)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{container}}",
+              "legendFormat": "{{ "{{" }} container {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -652,7 +652,7 @@ data:
               "expr": "sum(container_memory_working_set_bytes{cluster=\"$cluster\", namespace=\"$namespace\", pod=\"$pod\", container!=\"\", image!=\"\"}) by (container)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{container}}",
+              "legendFormat": "{{ "{{" }} container {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1125,7 +1125,7 @@ data:
               "expr": "sum(irate(container_network_receive_bytes_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1225,7 +1225,7 @@ data:
               "expr": "sum(irate(container_network_transmit_bytes_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1340,7 +1340,7 @@ data:
               "expr": "sum(irate(container_network_receive_packets_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1440,7 +1440,7 @@ data:
               "expr": "sum(irate(container_network_transmit_packets_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1555,7 +1555,7 @@ data:
               "expr": "sum(irate(container_network_receive_packets_dropped_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1655,7 +1655,7 @@ data:
               "expr": "sum(irate(container_network_transmit_packets_dropped_total{cluster=\"$cluster\", namespace=~\"$namespace\", pod=~\"$pod\"}[$__rate_interval])) by (pod)",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "legendLink": null,
               "refId": "A",
               "step": 10
@@ -1860,7 +1860,6 @@ data:
       "title": "Kubernetes / Compute Resources / Pod",
       "version": 1
     }
-
   pod_cluster_monitor.json: |-
     {
       "annotations": {
@@ -2224,7 +2223,7 @@ data:
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{ container_name }}",
+              "legendFormat": "{{ "{{" }} container_name {{ "}}" }}",
               "metric": "container_cpu",
               "refId": "A",
               "step": 10
@@ -2334,7 +2333,7 @@ data:
               "expr": "sort_desc(sum(container_memory_usage_bytes{image!=\"\", namespace=\"$namespace\" }) by (container_name, image))",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{ container_name }}",
+              "legendFormat": "{{ "{{" }} container_name {{ "}}" }}",
               "metric": "container_memory_usage:sort_desc",
               "refId": "A",
               "step": 10
@@ -2445,17 +2444,17 @@ data:
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{ pod }}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "metric": "network",
               "refId": "A",
               "step": 10
             },
             {
-              "expr": "sort_desc(sum by (pod_name) (rate (container_network_transmit_bytes_total{name!=\"\"}[5m])))",
+              "expr": "sort_desc(sum by (pod) (rate (container_network_transmit_bytes_total{name!=\"\"}[5m])))",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "{{ pod_name }}",
+              "legendFormat": "{{ "{{" }} pod {{ "}}" }}",
               "metric": "network",
               "refId": "B",
               "step": 10
