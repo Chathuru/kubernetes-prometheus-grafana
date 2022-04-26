@@ -1,2 +1,2 @@
 image:
-  name: grafana/grafana:7.4.3-ubuntu
+  name: grafana/grafana:8.5.0
