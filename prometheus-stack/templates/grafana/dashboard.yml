@@ -2609,7 +2609,7 @@ data:
       "title": "Kubernetes pod and cluster monitoring (via Prometheus)",
       "version": 1
     }
-  pod_monitorjson: |-
+  pod_monitor.json: |-
     {
       "annotations": {
         "list": [

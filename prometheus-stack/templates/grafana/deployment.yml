@@ -33,6 +33,8 @@ spec:
           mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
           subPath: datasource.yaml
         - name: grafana-dashboard
+          mountPath: /var/lib/grafana/dashboards
+        - name: grafana-dashboardproviders
           mountPath: /etc/grafana/provisioning/dashboards/
       volumes:
       - name: grafana-datasources
@@ -41,5 +43,8 @@ spec:
       - name: grafana-dashboard
         configMap:
           name: grafana-dashboard
+      - name: grafana-dashboardproviders
+        configMap:
+          name: grafana-dashboardproviders
       - name: grafana-persistent-storage
         emptyDir: {}
